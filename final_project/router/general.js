@@ -5,6 +5,7 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
+
 public_users.post("/register", (req, res) => {
     //Write your code here
     const { username, password } = req.body;
@@ -40,49 +41,69 @@ public_users.post("customer/login", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get("/",(req,res)=>{
-    res.json(books);
+    let myPromise = new Promise((resolve,reject)=>{
+        res.send(JSON.stringify(books,null,4));
+        resolve("promise resolved");
+    });
+    myPromise.then((message)=>{
+        console.log(message);
+    });
+    console.log("after promise");
+
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
-  const isbn = req.params.isbn;
-  res.send(books[isbn])
+  let myPromise = new Promise((resolve,reject)=>{
+    const isbn = req.params.isbn;
+    res.send(books[isbn]);
+    resolve("promise resolved");
+  });
+  myPromise.then((message)=>{
+      console.log(message);
+  });
+  console.log("after promise")
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
-  const author = req.params.author;
-  const matchingBooks = [];
-
-  for (const key in books) {
-    if (books.hasOwnProperty(key)) {
-      const book = books[key];
-      if (book.author.toLowerCase() === author.toLowerCase()) {
-        matchingBooks.push(book);
-      }
-    }
-  }
-
-  res.json(matchingBooks);
+  let myPromise = new Promise((resolve,reject)=>{
+    const author = req.params.author;
+    result = {};
+    for (isbn of Object.keys(books)) {
+        if (books[isbn]["author"] == author) {
+            result[isbn] = books[isbn];
+        }
+    };
+    res.send(JSON.stringify(result,null,4));
+    resolve("promise resolved");
+    });
+    myPromise.then((message)=>{
+        console.log(message);
+    });
+    console.log("after promise");
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
-  const title = req.params.title;
-  const matchingBooks = [];
-  for (const key in books) {
-    if (books.hasOwnProperty(key)) {
-      const book= books[key];
-      if (book.title.toLowerCase() === title.toLowerCase()) {
-        matchingBooks.push(book);
-      }
-    }
-  }
-
-  res.json(matchingBooks);
+  let myPromise = new Promise((resolve,reject)=>{
+    const title = req.params.title;
+    result = {};
+    for (isbn of Object.keys(books)) {
+        if (books[isbn]["title"] == title) {
+            result[isbn] = books[isbn];
+        }
+    };
+    res.send(JSON.stringify(result,null,4));
+    resolve("promise resolved");
+    });
+    myPromise.then((message)=>{
+        console.log(message);
+    });
+    console.log("after promise");
 });
 
 //  Get book review

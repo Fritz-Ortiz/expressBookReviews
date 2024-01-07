@@ -42,7 +42,7 @@ regd_users.post("/login", (req,res) => {
   if (authenticatedUser(username,password)) {
     let accessToken = jwt.sign({
       data: password
-    }, 'access', { expiresIn: 60 * 60 });
+    }, 'access', { expiresIn: 60 * 60 * 10 });
   
 
     req.session.authorization = {
@@ -63,8 +63,8 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       const review = req.body.review;
       
       const username = req.session.authorization.username;
-      
-      console.log("add review: ", req.params, req.body, req.session);
+
+      //console.log("add review: ", req.params, req.body, req.session);
       if (books[isbn]) {
           let book = books[isbn];
           book.reviews[username] = review;
@@ -78,7 +78,20 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
   
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-    
+    const isbn = req.params.isbn;
+      
+      
+      const username = req.session.authorization.username;
+
+      //console.log("add review: ", req.params, req.body, req.session);
+      if (books[isbn]) {
+          let book = books[isbn];
+          delete book.reviews[username];
+          return res.status(200).send("Review successfully deleted");
+      }
+      else {
+          return res.status(404).json({message: `ISBN ${isbn} not found`});
+      }
 });
 
 module.exports.authenticated = regd_users;
